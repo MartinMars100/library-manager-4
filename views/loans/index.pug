@@ -1,0 +1,29 @@
+extends ../partials/head
+
+block content
+  h1 Loans
+  p
+    a.button(href='/loans/new') Create New Loan
+  p Filters
+    a(href='/loans')  All |
+    a(href='/loans?filter=overdue')  Overdue |
+    a(href='/loans?filter=checked_out')  Checked Out 
+  table
+    thead
+      tr
+        th Book Id
+        th Patron Id
+        th Loaned On
+        th Return By
+        th Returned On
+      tbody
+        each loan in loans
+          tr
+            td
+              a(href='/books/' + loan.book_id) #{loan.book_id}
+            td #{loan.patron_id}
+            td #{loan.loaned_on}
+            td #{loan.return_by}
+            td #{loan.returned_on}
+            
+

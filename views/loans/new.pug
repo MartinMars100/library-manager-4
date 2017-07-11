@@ -1,0 +1,9 @@
+extends ../partials/head
+
+block content
+  h1= title
+  
+  include errors
+  
+  form(action="/loans/new", method="post")
+    include form

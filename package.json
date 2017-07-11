@@ -1,0 +1,38 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "A Library Manager App",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "connect": "*",
+    "cookie-parser": "*",
+    "dateformat": "*",
+    "debug": "*",
+    "express": "*",
+    "method-override": "*",
+    "morgan": "*",
+    "serve-favicon": "*"
+  },
+  "author": "Marty Kunsman",
+  "license": "MIT",
+  "devDependencies": {
+    "body-parser": "*",
+    "connect": "*",
+    "cookie-parser": "*",
+    "dateformat": "*",
+    "debug": "*",
+    "express": "*",
+    "method-override": "*",
+    "moment": "^2.18.1",
+    "morgan": "*",
+    "pug": "*",
+    "sequelize": "*",
+    "sequelize-cli": "*",
+    "serve-favicon": "*",
+    "sqlite3": "*"
+  }
+}

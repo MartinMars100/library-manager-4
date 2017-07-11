@@ -1,0 +1,9 @@
+extends ../partials/head
+
+block content
+  h1 New title
+
+  include errors
+
+  form(action="/patrons", method="post")
+    include form
