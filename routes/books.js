@@ -47,8 +47,8 @@ router.get('/overdue', function(req, res, next) {
 router.get('/checked_out', function(req, res, next) { 
           Loan.belongsTo(Book, { foreignKey: 'book_id' });
           Book.hasMany(Loan, { foreignKey: 'book_id' });
+          Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
           console.log('log get all checked out books');
-          // var date = moment(); 
           Book.findAll({
             include: [{
               model: Loan,
@@ -56,8 +56,8 @@ router.get('/checked_out', function(req, res, next) {
                 returned_on: {
                   $or: ['', null]
                 }
-              }
-            }]
+              } //end where
+            }] // end include
           }).then(function(results) {
             res.render('books/checked_out', {
               books: results,

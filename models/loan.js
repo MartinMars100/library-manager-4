@@ -7,7 +7,10 @@ module.exports = function(sequelize, DataTypes) {
     patron_id: DataTypes.INTEGER,
     loaned_on: DataTypes.DATE,
     return_by: DataTypes.DATE,
-    returned_on: DataTypes.DATE
+    returned_on: {
+      type: DataTypes.DATE,
+      defaultValue: " "
+    }
   }, {
     classMethods: {
       associate: function(models) {
@@ -20,5 +23,14 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+  Loan.prototype.formatLoanedOn = function() {
+        return dateFormat(this.loaned_on, "mm dd yyyy");
+  };
+  Loan.prototype.formatReturnBy = function() {
+        return dateFormat(this.return_by, "mm dd yyyy");
+  };
+  Loan.prototype.formatReturnedOn = function() {
+        return dateFormat(this.returned_on, "mm dd yyyy");
+  };
   return Loan;
 };
