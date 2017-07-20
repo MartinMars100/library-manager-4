@@ -1,7 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var Patron = require("../models").Patron;
-
+var express = require('express'),
+    router = express.Router(),
+    Book = require("../models").Book,
+    Loan = require("../models").Loan,
+    Patron = require("../models").Patron;
 
 /* GET patrons listing. */
 router.get('/', function(req, res, next) {
@@ -37,7 +38,7 @@ router.post('/', function(req, res, next) {
 /* Create a new patron form. */
 router.get('/new', function(req, res, next) {
   console.log('log create a new patron form');
-  res.render("patrons/new", {patron: Patron.build(), title: "New Patron"});
+  res.render("patrons/new", {patron: Patron.build()});
 });
 
 /* Edit patron form. */
@@ -67,17 +68,36 @@ router.get("/:id/delete", function(req, res, next){
   });
 });
 
-/* GET individual patron. */
+/* GET patron details by Id */
 router.get("/:id", function(req, res, next){
+  console.log("log router get patron detail");
+  Loan.belongsTo(Book, { foreignKey: 'book_id' });
+  Book.hasMany(Loan, { foreignKey: 'book_id' });
+  Loan.belongsTo(Patron, { foreignKey: "patron_id"});
   Patron.findById(req.params.id).then(function(patron){
-    if (patron){
-      res.render("patrons/show", {patron: patron, title: patron.title});   
-    } else {
-      res.send(404);
-    }
-  
+  Loan.findAll({
+    include: [
+      { 
+        model: Book    
+      },
+      {
+        model: Patron
+      }
+      ],
+      where: {                
+        patron_id: patron.id
+      }
+      }).then(function(loans){
+        if (patron){
+           res.render("patrons/detail", {
+             patron: patron,
+             loans: loans});   
+        } else {
+          res.send(404);
+        }
+      });
   }).catch(function(err){
-    res.spend(500);
+    return next(err);
   });
 });
 

@@ -1,5 +1,6 @@
 'use strict';
 var dateFormat = require('dateformat');
+var moment = require('moment');
 
 module.exports = function(sequelize, DataTypes) {
   var Loan = sequelize.define('Loan', {
@@ -24,13 +25,53 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
   Loan.prototype.formatLoanedOn = function() {
-        return dateFormat(this.loaned_on, "mm dd yyyy");
+        if (this.loaned_on > 0) {
+          return dateFormat(this.loaned_on, "mm dd yyyy");
+        } else {
+            return '';
+        } 
   };
   Loan.prototype.formatReturnBy = function() {
-        return dateFormat(this.return_by, "mm dd yyyy");
+        if (this.return_by > 0) {
+          return dateFormat(this.return_by, "mm dd yyyy");
+        } else {
+            return '';
+        } 
+        
   };
   Loan.prototype.formatReturnedOn = function() {
-        return dateFormat(this.returned_on, "mm dd yyyy");
+        if (this.returned_on > 0) {
+          return dateFormat(this.returned_on, "mm dd yyyy");
+        } else {
+            return '';
+        }
+  };
+  Loan.prototype.formatPatronFirstName = function() {
+        if (this.Patron !== null) {
+          return this.Patron.first_name;
+        } else {
+            return '';
+        }
+  };
+  Loan.prototype.formatPatronLastName = function() {
+        if (this.Patron !== null) {
+          return this.Patron.last_name ;
+        } else {
+            return '';
+        }
+  };
+  Loan.prototype.formatBookTitle = function() {
+        if (this.Book !== null) {
+          return this.Book.title ;
+        } else {
+            return '';
+        }
+  };
+  Loan.prototype.formatDate = function(date) {
+        return dateFormat(date, "yyyy-mm-dd");
+  };
+  Loan.prototype.setReturnDate = function(date) {
+        return moment().format('YYYY-MM-DD');
   };
   return Loan;
 };

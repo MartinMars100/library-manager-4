@@ -92,3 +92,6 @@ input {
 input[type=text], select {
   margin-left: 10px;
 }
+input[type=date], select {
+  margin-left: 10px;
+}

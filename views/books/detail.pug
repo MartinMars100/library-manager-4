@@ -1,7 +1,7 @@
 extends ../partials/head
 block content
     h1 #{book.title}
-    form(action='/books/' + book.id method='post')
+    form(action="/books/update/" + book.id, method='post')
         p
             label.for("title") Title
             input(id="title", type="text", value=book.title)
@@ -14,6 +14,8 @@ block content
         p
             label.for("first_published") First Published
             input(id="first_published", type="text", value=book.first_published)
+        p   
+            input(type="submit", value="Update")
     h2 Loan History
     table
         thead
@@ -28,12 +30,11 @@ block content
             for loan in loans
               tr
                 td #{book.title}
-                td #{loan.Patron.first_name} #{loan.Patron.last_name}
-                td #{loan.patron_id}
+                td #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
                 td #{loan.formatLoanedOn()}
                 td #{loan.formatReturnBy()}
-                td #{loan.returned_on}
+                td #{loan.formatReturnedOn()}
                 td
-                   if !loan.returned_on
-                     a.button(href='/loans/' + loan.id) Return Book
+                   if loan.formatReturnedOn() === ''
+                     a.button(href='/loans/return/' + loan.id) Return Book
     
