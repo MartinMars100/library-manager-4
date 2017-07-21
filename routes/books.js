@@ -68,17 +68,23 @@ router.get('/checked_out', function(req, res, next) {
           });
         });
 
-/* Create a new book form. */
+/* Create a New book form. */
 router.get('/new', function(req, res, next) {
   console.log('log create a new book form');
-  res.render("books/new", {book: Book.build()});
+  res.render("books/new", {
+    book: Book.build(),
+    title: "Create New Book"
+  });
 });
 
-/* Edit book form. */
+/* Create an Edit book form. */
 router.get("/:id/edit", function(req, res, next){
   Book.findById(req.params.id).then(function(book){
     if (book) {
-      res.render("book/edit", {book: book, title: "Edit Book"});
+      res.render("books/edit", {
+        book: book,
+        title: "Edit Book"
+      });
     } else {
       res.send(404);
     }
@@ -88,7 +94,7 @@ router.get("/:id/edit", function(req, res, next){
 });
 
 /* POST create book. */
-router.post('/create', function(req, res, next) {
+router.post('/', function(req, res, next) {
   console.log('log router post book');
   Book.create(req.body).then(function(book) {
     res.redirect("/books/" + book.id);
@@ -152,26 +158,9 @@ router.get("/:id", function(req, res, next){
   });
 }); //end router get
   
-/* POST update book. */
-router.post('/update/:id', function(req, res, next){
-  // console.log('TTThe log book router post');
-  // Book.findById(req.params.id).then(function(book){
-  //   Book.update ({
-  //     where: {
-  //     book_id: book.id
-  //     }
-  //   });
-  
-  // .post(function(req, res, next) {                           
-        // book.update(req.body);
-        // Book.update({                                
-        //   returned_on: req.body.returned_on,         
-        // }, {
-        //   where: {
-        //     book_id: req.params.id     
-        //   }
-  
-  Book.findById(req.params.id).then(function(book) {  
+/* PUT update book. */
+router.put('/:id', function(req, res, next){
+ Book.findById(req.params.id).then(function(book) {  
     if(book) { 
       console.log('book in update found');
       return book.update(req.body);
@@ -180,7 +169,7 @@ router.post('/update/:id', function(req, res, next){
     }
   
   }).then(function(book) {
-    res.redirect("/books");
+    res.redirect("/books/" + book.id);
       
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
@@ -214,10 +203,3 @@ router.delete("/:id", function(req, res, next){
 });
 
 module.exports = router;
-
-// Book.update({                                
-//           returned_on: req.body.returned_on,         
-//         }, {
-//           where: {
-//             book_id: req.params.id     //condition 
-//           }

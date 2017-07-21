@@ -8,7 +8,10 @@ var express = require('express'),
 router.get('/', function(req, res, next) {
   console.log('log route get all patrons');
   Patron.findAll({order: [["createdAt", "DESC"]]}).then(function(patrons){
-    res.render("patrons", {patrons: patrons, title: "Patrons" });
+    res.render("patrons", {
+      patrons: patrons, 
+      title: "Patrons" 
+    });
   }).catch(function(err){
     res.spend(500);
   });
@@ -38,14 +41,19 @@ router.post('/', function(req, res, next) {
 /* Create a new patron form. */
 router.get('/new', function(req, res, next) {
   console.log('log create a new patron form');
-  res.render("patrons/new", {patron: Patron.build()});
+  res.render("patrons/new", {
+    patron: Patron.build()
+  });
 });
 
 /* Edit patron form. */
 router.get("/:id/edit", function(req, res, next){
   Patron.findById(req.params.id).then(function(patron){
     if (patron) {
-      res.render("patrons/edit", {patron: patron, title: "Edit Patron"});
+      res.render("patrons/edit", {
+        patron: patron, 
+        title: "Edit Patron"
+      });
     } else {
       res.send(404);
     }
@@ -59,7 +67,10 @@ router.get("/:id/edit", function(req, res, next){
 router.get("/:id/delete", function(req, res, next){
   Patron.findById(req.params.id).then(function(patron){  
     if(patron) {
-      res.render("patrons/delete", {patron: patron, title: "Delete Patron"});
+      res.render("patrons/delete", {
+        patron: patron, 
+        title: "Delete Patron"
+      });
     } else {
       res.send(404);
     }
@@ -91,7 +102,8 @@ router.get("/:id", function(req, res, next){
         if (patron){
            res.render("patrons/detail", {
              patron: patron,
-             loans: loans});   
+             loans: loans
+           });   
         } else {
           res.send(404);
         }

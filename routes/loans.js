@@ -24,7 +24,10 @@ router.get('/', function(req, res, next) {
       }
       ]
   }).then(function(results){
-    res.render("loans", {loans: results });
+    res.render("loans", {
+      loans: results,
+      title: "Loans"
+    });
   }).catch(function(err){
     // res.send(500);
     return next(err); 
@@ -58,7 +61,8 @@ router.get('/overdue', function(req, res, next) {
           }).then(function(results) {
             console.log('log found overdue books' + results);
             res.render('loans/overdue', {
-              loans: results
+              loans: results,
+              title: "Overdue Loans"
             });
           }).catch(function(error) {
             res.send(500, error);
@@ -89,7 +93,8 @@ router.get('/checked_out', function(req, res, next) {
           }).then(function(results) {
             console.log('log found checked out books' + results);
             res.render('loans/checked_out', {
-              loans: results
+              loans: results,
+              title: "Checked-Out Books"
             });
           }).catch(function(error) {
             res.send(500, error);
@@ -100,7 +105,10 @@ router.get('/checked_out', function(req, res, next) {
 /* Create a new loan form. */
 router.get('/new', function(req, res, next) {
   console.log('log create a new loan form');
-  res.render("loans/new", {loan: Loan.build(), title: "New Loan"});
+  res.render("loans/new", {
+    loan: Loan.build(), 
+    title: "New Loan"
+  });
 });
 
 
@@ -128,14 +136,20 @@ router.post('/', function(req, res, next) {
 
 /* Create a new loan form. */
 router.get('/new', function(req, res, next) {
-  res.render("loans/new", {loan: Loan.build(), title: "New Loan"});
+  res.render("loans/new", {
+    loan: Loan.build(),
+    title: "New Loan"
+  });
 });
 
 /* Edit loan form. */
 router.get("/:id/edit", function(req, res, next){
   Loan.findById(req.params.id).then(function(loan){
     if (loan) {
-      res.render("loans/edit", {loan: loan, title: "Edit Loan"});
+      res.render("loans/edit", {
+        loan: loan, 
+        title: "Edit Loan"
+      });
     } else {
       res.send(404);
     }
@@ -148,7 +162,10 @@ router.get("/:id/edit", function(req, res, next){
 router.get("/:id/delete", function(req, res, next){
   Loan.findById(req.params.id).then(function(loan){  
     if(loan) {
-      res.render("loans/delete", {loan: loan, title: "Delete Loan"});
+      res.render("loans/delete", {
+        loan: loan, 
+        title: "Delete Loan"
+      });
     } else {
       res.send(404);
     }
@@ -161,7 +178,10 @@ router.get("/:id/delete", function(req, res, next){
 router.get("/:id", function(req, res, next){
   Loan.findById(req.params.id).then(function(loan){
     if (loan){
-      res.render("loans/show", {loan: loan, title: loan.book_id});   
+      res.render("loans/show", {
+        loan: loan, 
+        title: loan.book_id
+      });   
     } else {
       res.send(404);
     }
@@ -184,8 +204,8 @@ router.get("/return/:id", function(req, res, next){
     console.log('log router found id of return book');
     if(loan) {
       res.render('loans/return', {
-        loan: loan
-        // loan.returned_on: moment().format('YYYY-MM-DD')
+        loan: loan,
+        title: "Return Book"
       });
     } else {
       res.send(404);
