@@ -61,8 +61,16 @@ module.exports = function(sequelize, DataTypes) {
         }
   };
   Loan.prototype.formatBookTitle = function() {
+        if (this.Book !== null || this.Book !== undefined) {
+          return this.Book.title; 
+          
+        } else {
+            return '';
+        }
+  };
+  Loan.prototype.formatBookId = function() {
         if (this.Book !== null) {
-          return this.Book.title ;
+          return this.Book.id ;
         } else {
             return '';
         }
@@ -73,5 +81,6 @@ module.exports = function(sequelize, DataTypes) {
   Loan.prototype.setReturnDate = function(date) {
         return moment().format('YYYY-MM-DD');
   };
+  
   return Loan;
 };

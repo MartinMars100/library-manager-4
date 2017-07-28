@@ -20,12 +20,16 @@ block content
       tbody
         for loan in loans
           tr
-            td #{loan.formatBookTitle()} 
-            td #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
-            td #{loan.formatLoanedOn()}
-            td #{loan.formatReturnBy()}
-            td #{loan.formatReturnedOn()}
-            td
-               if loan.formatReturnedOn() === ''
-                 a.button(href='loans/return/' + loan.id) Return Book
+            if loan.formatBookId() === ''
+            
+            else
+              td
+                a(href='/books/' + loan.Book.id + "/edit") #{loan.formatBookTitle()}  
+              td #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
+              td #{loan.formatLoanedOn()}
+              td #{loan.formatReturnBy()}
+              td #{loan.formatReturnedOn()}
+              td
+                if loan.formatReturnedOn() === ''
+                  a.button(href='/loans/' + loan.id + '/delete') Return Book
             

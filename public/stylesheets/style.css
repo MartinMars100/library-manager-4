@@ -91,7 +91,26 @@ input {
 }
 input[type=text], select {
   margin-left: 10px;
+  font-size: 1em;
 }
 input[type=date], select {
   margin-left: 10px;
 }
+
+/*select {*/
+  /*width: 300px;*/  
+/*  margin: 0;*/
+/*  font-size: 1em;*/
+/*  background:*/
+/*  linear-gradient(*/
+/*  to right, */
+/*  #c1deeb,*/
+/*  #c1deeb 49%,*/
+/*  transparent 49%*/
+/*  );*/
+/*	padding-left: 2%;*/
+/*  border: none;*/
+/*  box-shadow: none;*/
+/*  -webkit-appearance: none;*/
+/*}*/
+

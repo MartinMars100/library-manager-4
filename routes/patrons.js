@@ -6,7 +6,6 @@ var express = require('express'),
 
 /* GET patrons listing. */
 router.get('/', function(req, res, next) {
-  console.log('log route get all patrons');
   Patron.findAll({order: [["createdAt", "DESC"]]}).then(function(patrons){
     res.render("patrons", {
       patrons: patrons, 
@@ -20,11 +19,9 @@ router.get('/', function(req, res, next) {
 /* POST create patron. */
 router.post('/', function(req, res, next) {
   Patron.create(req.body).then(function(patron) {
-    console.log('creating a new patron');
-    res.redirect("/patrons");
+    res.redirect("/patrons/" + patron.id + "/edit");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      console.log('error creating a new patron');
       res.render("patrons/new", {
         patron: Patron.build(req.body), 
         title: "New Patron",
@@ -40,19 +37,18 @@ router.post('/', function(req, res, next) {
 
 /* Create a new patron form. */
 router.get('/new', function(req, res, next) {
-  console.log('log create a new patron form');
   res.render("patrons/new", {
-    patron: Patron.build()
+    patron: Patron.build(),
+    title: "New Patron"
   });
 });
 
-/* Edit patron form. */
+/* Create an Edit patron form. */
 router.get("/:id/edit", function(req, res, next){
   Patron.findById(req.params.id).then(function(patron){
     if (patron) {
       res.render("patrons/edit", {
-        patron: patron, 
-        title: "Edit Patron"
+        patron: patron
       });
     } else {
       res.send(404);
@@ -79,9 +75,8 @@ router.get("/:id/delete", function(req, res, next){
   });
 });
 
-/* GET patron details by Id */
-router.get("/:id", function(req, res, next){
-  console.log("log router get patron detail");
+/* Create an Edit patron form */
+router.get("/:id/edit", function(req, res, next){
   Loan.belongsTo(Book, { foreignKey: 'book_id' });
   Book.hasMany(Loan, { foreignKey: 'book_id' });
   Loan.belongsTo(Patron, { foreignKey: "patron_id"});
@@ -100,7 +95,7 @@ router.get("/:id", function(req, res, next){
       }
       }).then(function(loans){
         if (patron){
-           res.render("patrons/detail", {
+           res.render("patrons/detai", {
              patron: patron,
              loans: loans
            });   
@@ -122,7 +117,7 @@ router.put("/:id", function(req, res, next){
       res.send(404);
     }
   }).then(function(patron){
-    res.redirect("/patrons/" + patron.id);     
+    res.redirect("/patrons/" + patron.id + "/edit");     
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
       var patron = Patron.build(req.body);

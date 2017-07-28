@@ -78,26 +78,40 @@ router.get('/new', function(req, res, next) {
 });
 
 /* Create an Edit book form. */
-router.get("/:id/edit", function(req, res, next){
-  Book.findById(req.params.id).then(function(book){
-    if (book) {
-      res.render("books/edit", {
-        book: book,
-        title: "Edit Book"
+  router.get("/:id/edit", function(req, res, next){
+  Loan.belongsTo(Book, { foreignKey: 'book_id' });
+  Book.hasMany(Loan, { foreignKey: 'book_id' });
+  Loan.belongsTo(Patron, { foreignKey: "patron_id"});
+  Book.findById(req.params.id).then(function(book){   
+  Loan.findAll({
+    include: [
+      { 
+        model: Book    
+      },
+      {
+        model: Patron
+      }
+      ],
+      where: {                
+        book_id: book.id
+      }
+      }).then(function(loans){
+          res.render('books/edit', {  
+            book: book, 
+            loans: loans
+          });
       });
-    } else {
-      res.send(404);
-    }
-    }).catch(function(err){
-    res.send(500);
+      
+  }).catch(function(err){
+    return next(err);
   });
-});
+}); //end router get
 
 /* POST create book. */
 router.post('/', function(req, res, next) {
   console.log('log router post book');
   Book.create(req.body).then(function(book) {
-    res.redirect("/books/" + book.id);
+    res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
       console.log('log error');
@@ -127,36 +141,9 @@ router.post('/', function(req, res, next) {
 //   });
 // });
 
-/* GET book details by ID */
-router.get("/:id", function(req, res, next){
-  console.log("log router get ind book");
-  Loan.belongsTo(Book, { foreignKey: 'book_id' });
-  Book.hasMany(Loan, { foreignKey: 'book_id' });
-  Loan.belongsTo(Patron, { foreignKey: "patron_id"});
-  Book.findById(req.params.id).then(function(book){   
-  Loan.findAll({
-    include: [
-      { 
-        model: Book    
-      },
-      {
-        model: Patron
-      }
-      ],
-      where: {                
-        book_id: book.id
-      }
-      }).then(function(loans){
-          res.render('books/detail', {  
-            book: book, 
-            loans: loans
-          });
-      });
-      
-  }).catch(function(err){
-    return next(err);
-  });
-}); //end router get
+/* GET book edit by ID */
+// router.get("/:id", function(req, res, next){
+  
   
 /* PUT update book. */
 router.put('/:id', function(req, res, next){
@@ -169,13 +156,13 @@ router.put('/:id', function(req, res, next){
     }
   
   }).then(function(book) {
-    res.redirect("/books/" + book.id);
+    res.redirect("/books");
       
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
       var book = Book.build(req.body);
       book.id = req.params.id;
-      res.render("books/detail", {
+      res.render("books/edit", {
         book: book,
         errors: err.errors
       });
