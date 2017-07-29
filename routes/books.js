@@ -110,6 +110,7 @@ router.get('/new', function(req, res, next) {
 /* POST create book. */
 router.post('/', function(req, res, next) {
   console.log('log router post book');
+  checkNewBookInputs();
   Book.create(req.body).then(function(book) {
     res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){
@@ -128,19 +129,6 @@ router.post('/', function(req, res, next) {
   });
 });
 
-/* Delete book form. */
-// router.get("/:id/delete", function(req, res, next){
-//   Book.findById(req.params.id).then(function(book){  
-//     if(book) {
-//       res.render("books/delete", {book: book, title: "Delete Book"});
-//     } else {
-//       res.send(404);
-//     }
-//   }).catch(function(err){
-//     res.send(500);
-//   });
-// });
-
 /* GET book edit by ID */
 // router.get("/:id", function(req, res, next){
   
@@ -149,7 +137,6 @@ router.post('/', function(req, res, next) {
 router.put('/:id', function(req, res, next){
  Book.findById(req.params.id).then(function(book) {  
     if(book) { 
-      console.log('book in update found');
       return book.update(req.body);
     } else {
         res.sendStatus(404);
@@ -188,5 +175,16 @@ router.delete("/:id", function(req, res, next){
     res.send(500);
   });
 });
+
+function checkNewBookInputs() {
+  var titleInput = $('#title').val();
+  if (titleInput == '') {
+    $('label[for="title"]').addClass('error').text("Please Enter a Book Title");
+    event.preventDefault();
+  } else{
+    $('label[for="title"]').removeClass('error').text('Title:');
+  }
+  
+}
 
 module.exports = router;

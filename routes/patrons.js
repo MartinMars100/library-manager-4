@@ -76,37 +76,37 @@ router.get("/:id/delete", function(req, res, next){
 });
 
 /* Create an Edit patron form */
-router.get("/:id/edit", function(req, res, next){
-  Loan.belongsTo(Book, { foreignKey: 'book_id' });
-  Book.hasMany(Loan, { foreignKey: 'book_id' });
-  Loan.belongsTo(Patron, { foreignKey: "patron_id"});
-  Patron.findById(req.params.id).then(function(patron){
-  Loan.findAll({
-    include: [
-      { 
-        model: Book    
-      },
-      {
-        model: Patron
-      }
-      ],
-      where: {                
-        patron_id: patron.id
-      }
-      }).then(function(loans){
-        if (patron){
-           res.render("patrons/detai", {
-             patron: patron,
-             loans: loans
-           });   
-        } else {
-          res.send(404);
-        }
-      });
-  }).catch(function(err){
-    return next(err);
-  });
-});
+// router.get("/:id/edit", function(req, res, next){
+//   Loan.belongsTo(Book, { foreignKey: 'book_id' });
+//   Book.hasMany(Loan, { foreignKey: 'book_id' });
+//   Loan.belongsTo(Patron, { foreignKey: "patron_id"});
+//   Patron.findById(req.params.id).then(function(patron){
+//   Loan.findAll({
+//     include: [
+//       { 
+//         model: Book    
+//       },
+//       {
+//         model: Patron
+//       }
+//       ],
+//       where: {                
+//         patron_id: patron.id
+//       }
+//       }).then(function(loans){
+//         if (patron){
+//           res.render("patrons/detail", {
+//             patron: patron,
+//             loans: loans
+//           });   
+//         } else {
+//           res.send(404);
+//         }
+//       });
+//   }).catch(function(err){
+//     return next(err);
+//   });
+// });
 
 /* PUT update patron. */
 router.put("/:id", function(req, res, next){

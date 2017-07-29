@@ -97,6 +97,10 @@ input[type=date], select {
   margin-left: 10px;
 }
 
+/*select #patron_id {*/
+/*  font-size: 2em;*/
+/*}*/
+
 /*select {*/
   /*width: 300px;*/  
 /*  margin: 0;*/
