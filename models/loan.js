@@ -4,13 +4,45 @@ var moment = require('moment');
 
 module.exports = function(sequelize, DataTypes) {
   var Loan = sequelize.define('Loan', {
-    book_id: DataTypes.INTEGER,
-    patron_id: DataTypes.INTEGER,
-    loaned_on: DataTypes.DATE,
-    return_by: DataTypes.DATE,
+    book_id: {
+      type: DataTypes.INTEGER,
+      validate: {
+        notEmpty: {
+          msg: "Book is required"
+        }
+      }
+    }, 
+    patron_id: {
+      type: DataTypes.INTEGER,
+      validate: {
+        notEmpty: {
+          msg: "Patron is required"
+        }
+      }
+    },
+    loaned_on: {
+      type: DataTypes.DATE,
+      validate: {
+        notEmpty: {
+          msg: "A Vailid Loaned On Date is required"
+        }
+      }
+    },
+    return_by: {
+      type: DataTypes.DATE,
+      validate: {
+        notEmpty: {
+          msg: "Enter a Valid Return By Date in mm/dd/yyyy format"
+        }
+      }
+    },
     returned_on: {
       type: DataTypes.DATE,
-      defaultValue: " "
+      validate: {
+        notEmpty: {
+          msg: "Enter a Valid Returned On Date in mm/dd/yyyy format"
+        }
+      }
     }
   }, {
     classMethods: {
@@ -80,6 +112,17 @@ module.exports = function(sequelize, DataTypes) {
   };
   Loan.prototype.setReturnDate = function(date) {
         return moment().format('YYYY-MM-DD');
+  };
+  Loan.prototype.validReturnDate = function(date) {
+        var regex = /^[0-9]{2}[\/][0-9]{2}[\/][0-9]{4}$/g;
+        
+        if(regex.test(date)){
+          console.log('Yes Valid Regex Date');
+          return date;
+        } else {
+          console.log('This is not a valid REGEX Date');
+          return '';
+        }
   };
   
   return Loan;

@@ -110,14 +110,12 @@ router.get('/new', function(req, res, next) {
 /* POST create book. */
 router.post('/', function(req, res, next) {
   console.log('log router post book');
-  checkNewBookInputs();
   Book.create(req.body).then(function(book) {
     res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      console.log('log error');
       res.render("books/new", {
-        article: Book.build(req.body), 
+        book: Book.build(req.body), 
         title: "New Book",
         errors: err.errors
       });
@@ -128,10 +126,6 @@ router.post('/', function(req, res, next) {
     res.send(500);
   });
 });
-
-/* GET book edit by ID */
-// router.get("/:id", function(req, res, next){
-  
   
 /* PUT update book. */
 router.put('/:id', function(req, res, next){
@@ -175,16 +169,5 @@ router.delete("/:id", function(req, res, next){
     res.send(500);
   });
 });
-
-function checkNewBookInputs() {
-  var titleInput = $('#title').val();
-  if (titleInput == '') {
-    $('label[for="title"]').addClass('error').text("Please Enter a Book Title");
-    event.preventDefault();
-  } else{
-    $('label[for="title"]').removeClass('error').text('Title:');
-  }
-  
-}
 
 module.exports = router;

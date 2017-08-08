@@ -20,7 +20,7 @@ a.button, input[type=submit] {
   cursor: pointer;
 }
 form a.button, input[type=submit] {
-  margin-left: 140px;
+  /*margin-left: 140px;*/
 }
 input[type=submit] {
   border: 0;
@@ -118,3 +118,12 @@ input[type=date], select {
 /*  -webkit-appearance: none;*/
 /*}*/
 
+.errorMsg {
+  color:red;
+  font-size: 1.5em;
+  margin-bottom: .5em;
+}
+
+#returnedOn{
+  margin-bottom: 1em;
+}

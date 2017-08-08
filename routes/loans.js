@@ -96,41 +96,13 @@ router.get('/checked_out', function(req, res, next) {
           });
         });
 
-
-/* Create a new loan form. */
-// router.get('/new', function(req, res, next) {
-//   res.render("loans/new", {
-//     loan: Loan.build(), 
-//     title: "New Loan"
-//   });
-// });
-
-/* POST create loan */
-router.post('/', function(req, res, next) {
-  Loan.create(req.body).then(function(loan) {
-    res.redirect("/loans");
-  }).catch(function(err){
-    if(err.name === "SequelizeValidationError"){
-      res.render("loans/new", {
-        loan: Loan.build(req.body), 
-        title: "New Loan",
-        errors: err.errors
-      });
-    } else {
-      throw err;
-    }
-  }).catch(function(err){
-    res.spend(500);
-  });
-});
-
 /* Create a new loan form. */
 router.get('/new', function(req, res, next) {
+  console.log('log create a new loan form');
   Book.findAll().then(function(books) {
 		Patron.findAll().then(function(patrons) {
 			var loanedOn = moment().format('YYYY-MM-DD');
 			var returnBy = moment().add('7', 'days').format('YYYY-MM-DD');
-
 			res.render('loans/new', 
 			{
 				books : books, 
@@ -140,8 +112,8 @@ router.get('/new', function(req, res, next) {
 				title: "New Loan"
 			});
   
-  
 		}).catch(function(error) {
+		    console.log('log create new loan form catch error');
         res.send(500, error);
     });
   });
@@ -181,17 +153,19 @@ router.get("/:id", function(req, res, next){
 });
 
 /* Create a Return Book loan form. */
-router.get("/:id/delete", function(req, res, next){
+router.get("/:id/return", function(req, res, next){
   Loan.belongsTo(Book, {foreignKey: 'book_id'});
 	Loan.belongsTo(Patron, {foreignKey: 'patron_id'});
+	var returnedOn = moment().format('YYYY-MM-DD');
   Loan.findOne({ 
     where: {id: req.params.id},
     include: [{model: Book},{model: Patron}] 
   }).then(function(loan){
     if(loan) {
-      res.render('loans/delete', {
+      res.render('loans/return', {
         loan: loan,
-        title: "Return Book"
+        title: "Return Book",
+        returnedOn: returnedOn
       });
     } else {
       res.send(404);
@@ -201,31 +175,85 @@ router.get("/:id/delete", function(req, res, next){
   });
 });
 
-/*  Delete Book Loan - Return Book */
-router.delete("/:id", function(req, res, next){
-  Loan.findById(req.params.id).then(function(loan){
-    if(loan) {
-      return loan.destroy();  
-    } else {
-      res.send(404);
-    }
-  }).then(function(loan){
-    res.redirect("/loans/");     
+/* POST create loan */
+router.post('/', function(req, res, next) {
+  console.log('log before req.body.loaned_on = ' + req.body.loaned_on);
+  var validLoanedOn = loan.validReturnDate(req.body.loaned_on);
+  req.body.loaned_on = validLoanedOn;
+  console.log('log after req.body.loaned_on = ' + req.body.loaned_on);
+  // return loan.update({returned_on: validDate});
+  var validDate = loan.validReturnDate(req.body.loaned_on);
+      console.log('log validDate = ' + validDate)
+  
+  
+  Loan.create(req.body)
+  .then(function(loan) {
+    res.redirect("/loans");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      var loan = Loan.build(req.body);
-      loan.id = req.params.id;
-      
-      res.render("loans/edit", {
-        loan: loan, 
-        title: "Edit Loan",
-        errors: err.errors
+      console.log('log create a new loan form');
+      Book.findAll().then(function(books) {
+		    Patron.findAll().then(function(patrons) {
+			    var loanedOn = moment().format('YYYY-MM-DD');
+			    var returnBy = moment().add('7', 'days').format('YYYY-MM-DD');
+			    res.render('loans/new', 
+			    {
+				    books : books, 
+				    patrons: patrons, 
+				    loanedOn: loanedOn,
+				    returnBy: returnBy,
+				    title: "New Loan"
+			    });  
+		    });
       });
     } else {
       throw err;
     }
   }).catch(function(err){
-    res.spend(500);
+    console.log('log New Loan Catch Error');
+    res.send(500);
+  });
+}); 
+
+/*  Return Book */
+router.put("/:id", function(req, res, next){
+  console.log('log return book returned_on = ' + req.body.returned_on);
+  Loan.belongsTo(Book, {foreignKey: 'book_id'});
+	Loan.belongsTo(Patron, {foreignKey: 'patron_id'});
+// 	var returnedOn = moment().format('YYYY-MM-DD');
+  console.log('log Return Book');
+  Loan.findById(req.params.id).then(function(loan){
+    if(loan) {
+      var validDate = loan.validReturnDate(req.body.returned_on);
+      console.log('log validDate = ' + validDate)
+      return loan.update({returned_on: validDate});
+    } else {
+      console.log('Return Book loan not found');
+      res.sendStatus(404);
+    }
+  })
+  .then(function(loan){
+    res.redirect("/loans/");     
+  })
+  .catch(function(err){
+      if(err.name === "SequelizeValidationError"){
+        console.log('book return sql valiate error');
+      
+        Loan.findOne({ 
+          where: {id: req.params.id},
+          include: [{model: Book},{model: Patron}] 
+        })
+        .then(function(loan){
+          res.render("loans/return", {
+          loan: loan, 
+          title: "Return Book",
+          errors: err.errors
+          })
+        });
+      }
+  })
+  .catch(function(err){
+    res.send(500);
   });
 });
 
