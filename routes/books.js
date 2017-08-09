@@ -59,6 +59,7 @@ router.get('/checked_out', function(req, res, next) {
               } //end where
             }] // end include
           }).then(function(results) {
+            console.log('log checked out results = ' + results);
             res.render('books/checked_out', {
               books: results,
               title: "Checked Out Books"

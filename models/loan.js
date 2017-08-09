@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       validate: {
         notEmpty: {
-          msg: "A Vailid Loaned On Date is required"
+          msg: "Enter a Valid Loaned On Date with mm/dd/yyyy format"
         }
       }
     },
@@ -32,7 +32,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       validate: {
         notEmpty: {
-          msg: "Enter a Valid Return By Date in mm/dd/yyyy format"
+          msg: "Return Date must come after Loaned On Date with mm/dd/yyyy format"
         }
       }
     },
@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       validate: {
         notEmpty: {
-          msg: "Enter a Valid Returned On Date in mm/dd/yyyy format"
+          msg: "Enter a Valid Returned On Date with mm/dd/yyyy format"
         }
       }
     }
@@ -93,15 +93,17 @@ module.exports = function(sequelize, DataTypes) {
         }
   };
   Loan.prototype.formatBookTitle = function() {
-        if (this.Book !== null || this.Book !== undefined) {
+        if (this.Book !== null && this.Book !== undefined) {
+          console.log('Loan form book title is looking good');
           return this.Book.title; 
-          
         } else {
+          console.log('Loan form book title is null or undefined');
             return '';
         }
   };
   Loan.prototype.formatBookId = function() {
         if (this.Book !== null) {
+          console.log('log Loan.formatBookId Book is not null');
           return this.Book.id ;
         } else {
             return '';
@@ -114,8 +116,10 @@ module.exports = function(sequelize, DataTypes) {
         return moment().format('YYYY-MM-DD');
   };
   Loan.prototype.validReturnDate = function(date) {
-        var regex = /^[0-9]{2}[\/][0-9]{2}[\/][0-9]{4}$/g;
-        
+        console.log('log date = ' + date);
+        // var regex = /^[0-9]{2}[\/][0-9]{2}[\/][0-9]{4}$/g;
+        // var regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
+        var regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
         if(regex.test(date)){
           console.log('Yes Valid Regex Date');
           return date;

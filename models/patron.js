@@ -28,24 +28,24 @@ module.exports = function(sequelize, DataTypes) {
     email: {
       type: DataTypes.STRING,
       validate: {
-        notEmpty: {
-          msg: "Email is required"
+        isEmail: {
+          msg: "Enter a correct email address"
         }
       }
     },
     library_id: {
       type: DataTypes.STRING,
       validate: {
-        notEmpty: {
-          msg: "Library Id is required"
+        isInt: {
+          msg: "Library Id should be all numbers"
         }
       }
     },  
     zip_code: {
       type: DataTypes.INTEGER,
       validate: {
-        notEmpty: {
-          msg: "Zip Code is required"
+        isInt: {
+          msg: "Zip Code should be all numbers"
         }
       }
     }
