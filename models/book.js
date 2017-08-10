@@ -29,29 +29,26 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     first_published: {
-      type: DataTypes.STRING
-      // validate: {
-      //   formatDate() {
-      //   console.log('log New Book first published date');
-      //   var regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
-      //   if(regex.test(this)){
-      //     console.log('Yes Valid Regex Date');
-      //     return this;
-      //   } else {
-      //       console.log('This is not a valid REGEX Date');
-      //     return '';
-      //   }
-      // }
-      // }
+      type: DataTypes.INTEGER
     }
   }, {
       classMethods: {
         associate: function(models) {
         // associations can be defined here
       }
-    }
-  }
-  );
-  
+    },
+  });
+  Book.prototype.formatPublishedDate = function() {
+        if (this.first_published > 0) {
+          console.log('formatPublishedDate looks good');
+          console.log(this.first_published);
+          return dateFormat(this.loaned_on, "yyyy");
+        } else {
+            console.log('formatPublishedDate looks bad');
+            console.log(this.first_published);
+            return '';
+        } 
+  };
+
   return Book;
 };

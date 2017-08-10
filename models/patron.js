@@ -58,10 +58,8 @@ module.exports = function(sequelize, DataTypes) {
   });
   Patron.prototype.formatPatronFirstName = function() {
         if (Patron !== null) {
-          console.log('log Patron first name = ' + Patron.first_name);
           return Patron.first_name;
         } else {
-            console.log('Patron.first_name is blank');
             return '';
         }
   };

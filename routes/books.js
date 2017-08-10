@@ -6,8 +6,8 @@ var express = require('express'),
     moment = require('moment');
 
 /* GET all books */
-router.get('/', function(req, res, next) {
-  console.log('log router GET all books');
+/* Books wil be listed in desc order by published date */
+router.get('/', function(req, res, next) { 
   Book.findAll({order: [["first_published", "DESC"]]}).then(function(books){
     res.render("books", {books: books, title: "Books" });
   }).catch(function(err){
@@ -16,10 +16,10 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET all overdue books */
+// Get all books where return on date is past today's date
 router.get('/overdue', function(req, res, next) { 
           Loan.belongsTo(Book, { foreignKey: 'book_id' });
           Book.hasMany(Loan, { foreignKey: 'book_id' });
-          console.log('log get all overdue books');
           var date = moment(); 
           Book.findAll({
             include: [{
@@ -48,7 +48,6 @@ router.get('/checked_out', function(req, res, next) {
           Loan.belongsTo(Book, { foreignKey: 'book_id' });
           Book.hasMany(Loan, { foreignKey: 'book_id' });
           Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
-          console.log('log get all checked out books');
           Book.findAll({
             include: [{
               model: Loan,
@@ -59,7 +58,6 @@ router.get('/checked_out', function(req, res, next) {
               } //end where
             }] // end include
           }).then(function(results) {
-            console.log('log checked out results = ' + results);
             res.render('books/checked_out', {
               books: results,
               title: "Checked Out Books"
@@ -71,7 +69,6 @@ router.get('/checked_out', function(req, res, next) {
 
 /* Create a New book form. */
 router.get('/new', function(req, res, next) {
-  console.log('log create a new book form');
   res.render("books/new", {
     book: Book.build(),
     title: "Create New Book"
@@ -110,7 +107,6 @@ router.get('/new', function(req, res, next) {
 
 /* POST create book. */
 router.post('/', function(req, res, next) {
-  console.log('log router post book');
   Book.create(req.body).then(function(book) {
     res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){

@@ -5,6 +5,7 @@ var express = require('express'),
     Patron = require("../models").Patron;
 
 /* GET patrons listing. */
+// Patrons Will be listed in desc order by date they were created
 router.get('/', function(req, res, next) {
   Patron.findAll({order: [["createdAt", "DESC"]]}).then(function(patrons){
     res.render("patrons", {
@@ -26,14 +27,12 @@ router.get('/new', function(req, res, next) {
 
 /* Create an Edit patron form. */
 router.get("/:id/edit", function(req, res, next){
-  console.log('log create an edit patron form');
   Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
   Loan.belongsTo(Book, { foreignKey: 'book_id' });
   Patron.findOne({
     where: {id: req.params.id}
   })
   .then(function(patron){
-  console.log('log patron.id= ' + patron.id);
     Loan.findAll({
       include: [
         {
@@ -45,8 +44,6 @@ router.get("/:id/edit", function(req, res, next){
         } 
     })
     .then(function(loans){
-      console.log('log create form before if');
-       console.log('log edit patron found');
       res.render('patrons/edit', {
         patron: patron,
         loans: loans
@@ -57,19 +54,6 @@ router.get("/:id/edit", function(req, res, next){
     return next(err);
   });
 });
-
-  // Patron.findById(req.params.id).then(function(patron){
-  //   if (patron) {
-  //     res.render("patrons/edit", {
-  //       patron: patron
-  //     });
-  //   } else {
-  //     res.send(404);
-  //   }
-  //   }).catch(function(err){
-  //   res.send(500);
-  //   });
-
 
 
 /* Delete patron form. */
@@ -109,23 +93,18 @@ router.post('/', function(req, res, next) {
 
 /* PUT update patron. */
 router.put("/:id", function(req, res, next){
-  console.log('log Put update Patron');
   Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
   Loan.belongsTo(Book, { foreignKey: 'book_id' });
   
   Patron.findOne({
     where: {id: req.params.id}
   }).then(function(patron){
-    console.log('log check1')
     if(patron) {
-      console.log('log patron found')
       return patron.update(req.body);  
     } else {
-      console.log('log patron not found');
       res.send(404);
     }
   }).then(function(patron){
-    console.log('patron going to redirect');
     res.redirect("/patrons/" + patron.id + "/edit");     
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
@@ -158,6 +137,5 @@ router.delete("/:id", function(req, res, next){
     res.send(500);
   });
 });
-
 
 module.exports = router;

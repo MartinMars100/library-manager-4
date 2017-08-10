@@ -7,6 +7,7 @@ var express = require('express'),
 
 
 /* GET all loans */
+// All loans will be displayed in desc order by date of creation
 router.get('/', function(req, res, next) {
   Loan.belongsTo(Book, { foreignKey: 'book_id' });
   Book.hasMany(Loan, { foreignKey: 'book_id' });
@@ -34,6 +35,7 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET all overdue loans */
+// The list of all loans where return by date is before today's date
 router.get('/overdue', function(req, res, next) { 
           Loan.belongsTo(Book, { foreignKey: 'book_id' });
           Book.hasMany(Loan, { foreignKey: 'book_id' });
@@ -72,7 +74,6 @@ router.get('/checked_out', function(req, res, next) {
           Book.hasMany(Loan, { foreignKey: 'book_id' });
           Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
           var date = moment(); 
-          console.log('log get all checked out book loans');
           Loan.findAll({
             where: {
               returned_on: {
@@ -98,8 +99,9 @@ router.get('/checked_out', function(req, res, next) {
         });
 
 /* Create a new loan form. */
+// The new loan loaned on field is populated with today's date
+// The new loan return by field is populated with today's date + 7 days
 router.get('/new', function(req, res, next) {
-  console.log('log create a new loan form');
   Book.findAll().then(function(books) {
 		Patron.findAll().then(function(patrons) {
 			var loanedOn = moment().format('MM/DD/YYYY');
@@ -114,7 +116,6 @@ router.get('/new', function(req, res, next) {
 			});
   
 		}).catch(function(error) {
-		    console.log('log create new loan form catch error');
         res.send(500, error);
     });
   });
@@ -154,6 +155,7 @@ router.get("/:id", function(req, res, next){
 });
 
 /* Create a Return Book loan form. */
+// The Return Book form's field 'Returned On' is populated with today's date
 router.get("/:id/return", function(req, res, next){
   Loan.belongsTo(Book, {foreignKey: 'book_id'});
 	Loan.belongsTo(Patron, {foreignKey: 'patron_id'});
@@ -177,8 +179,8 @@ router.get("/:id/return", function(req, res, next){
 });
 
 /* POST create loan */
+// New Loans must have valid 'Loaned On' and 'Return By' Dates in mm/dd/yyyy format 
 router.post('/', function(req, res, next) {
-  console.log('log req.body.loaned_on = ' + req.body.loaned_on)
   var validLoanedOn = validDate(req.body.loaned_on);
   req.body.loaned_on = validLoanedOn;
   var validReturnBy = validDate(req.body.return_by);
@@ -191,16 +193,15 @@ router.post('/', function(req, res, next) {
     res.redirect("/loans");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      console.log('log Sql Error on  create a new loan form');
       Book.findAll().then(function(books) {
 		    Patron.findAll().then(function(patrons) {
-			    var loanedOn = moment().format('MM/DD/YYYY');
+			   // var loanedOn = moment().format('MM/DD/YYYY');
 			    var returnBy = moment().add('7', 'days').format('MM/DD/YYYY');
 			    res.render('loans/new', 
 			    {
 				    books : books, 
 				    patrons: patrons, 
-				    loanedOn: loanedOn,
+				    // loanedOn: loanedOn,
 				    returnBy: returnBy,
 				    title: "New Loan",
 				    errors: err.errors
@@ -217,20 +218,16 @@ router.post('/', function(req, res, next) {
 }); 
 
 /*  Return Book */
+// The Return Book Page updates the book with a Return Date
 router.put("/:id", function(req, res, next){
-  console.log('log return book returned_on = ' + req.body.returned_on);
   Loan.belongsTo(Book, {foreignKey: 'book_id'});
 	Loan.belongsTo(Patron, {foreignKey: 'patron_id'});
 // 	var returnedOn = moment().format('YYYY-MM-DD');
-  console.log('log Return Book');
   Loan.findById(req.params.id).then(function(loan){
     if(loan) {
-      console.log('log req.body.returned_on = ' + req.body.returned_on);
       var validDate = loan.validReturnDate(req.body.returned_on);
-      console.log('log validDate = ' + validDate)
       return loan.update({returned_on: validDate});
     } else {
-      console.log('Return Book loan not found');
       res.sendStatus(404);
     }
   })
@@ -239,8 +236,6 @@ router.put("/:id", function(req, res, next){
   })
   .catch(function(err){
       if(err.name === "SequelizeValidationError"){
-        console.log('book return sql valiate error');
-      
         Loan.findOne({ 
           where: {id: req.params.id},
           include: [{model: Book},{model: Patron}] 
@@ -259,6 +254,7 @@ router.put("/:id", function(req, res, next){
   });
 });
 
+// The validDate function is used by the new loan page to check date formats
 validDate = function(date) {
 var regex = /^[0-9]{2}[\/][0-9]{2}[\/][0-9]{4}$/g;
         
@@ -271,13 +267,12 @@ if(regex.test(date)){
   }
 };
 
+// The validReturn function is used to make sure 'Return By' date comes after 'Loaned On' date
 validReturn = function(loanedOn,returnBy) {
 
 if (returnBy > loanedOn) {
-  console.log('returnBy is > loanedOn Date');
   return returnBy;
 } else {
-  console.log('Return By Date must come after loaned On date');
   return '';
   }
 };
