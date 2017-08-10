@@ -1,9 +1,7 @@
-This App is From the Treehouse Course, 
-  "Using SQL and Node.js with Sequelize"
-The App allows a person to save, modify and delete
-  a library of blog posts.
+This Application Helps A Library Manage it's books,
+patrons, and loans. It features a Sequelize Database.
 
-## To Start the App
+## To Start the Website
 From your console, install all dependencies that are listed
   in the package.json file.
 Next, run: npm start
