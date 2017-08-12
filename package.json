@@ -6,33 +6,23 @@
   "scripts": {
     "start": "node ./bin/www"
   },
-  "dependencies": {
-    "body-parser": "*",
-    "connect": "*",
-    "cookie-parser": "*",
-    "dateformat": "*",
-    "debug": "*",
-    "express": "*",
-    "method-override": "*",
-    "morgan": "*",
-    "serve-favicon": "*"
-  },
+  "dependencies": {},
   "author": "Marty Kunsman",
   "license": "MIT",
   "devDependencies": {
-    "body-parser": "*",
-    "connect": "*",
-    "cookie-parser": "*",
-    "dateformat": "*",
-    "debug": "*",
-    "express": "*",
-    "method-override": "*",
+    "body-parser": "^1.17.2",
+    "connect": "^3.6.3",
+    "cookie-parser": "^1.4.3",
+    "dateformat": "^2.0.0",
+    "debug": "^3.0.0",
+    "express": "^4.15.4",
+    "method-override": "^2.3.9",
     "moment": "^2.18.1",
-    "morgan": "*",
-    "pug": "*",
-    "sequelize": "*",
-    "sequelize-cli": "*",
-    "serve-favicon": "*",
-    "sqlite3": "*"
+    "morgan": "^1.8.2",
+    "pug": "^2.0.0-rc.3",
+    "sequelize": "^4.4.3",
+    "sequelize-cli": "^2.8.0",
+    "serve-favicon": "^2.4.3",
+    "sqlite3": "^3.1.9"
   }
 }
