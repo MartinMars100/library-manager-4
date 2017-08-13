@@ -1,0 +1,15 @@
+extends ../partials/head
+
+block content
+  h1= title
+  
+  h2 Are you sure you want to Return book? 
+  
+  include errors
+    
+  form(action="/loans/" + loan.id + "?_method=PUT", method="post")
+    include return_form  
+    
+
+    
+    

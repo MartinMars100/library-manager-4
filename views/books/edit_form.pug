@@ -1,0 +1,36 @@
+div
+  label(for="title") Title:
+  input(type="text", name="title", value=book.title)
+div
+  label(for="author") Author:
+  input(type="text", name="author", value=book.author)
+div
+  label(for="genre") Genre:
+  input(type="text", name="genre", value=book.genre)
+div
+  label(for="first_published") First Published:
+  input(type="number", min='1900', max='2099', name="first_published", value=book.first_published)
+input(type="submit", value="Update Book")
+h2 Loan History
+table
+    thead
+        tr
+            th Book
+            th Patron
+            th Loaned On
+            th Return By
+            th Returned On
+            th Action
+    tbody
+        for loan in loans
+          tr
+            td #{book.title}
+            td 
+              a(href='/patrons/' + loan.patron_id + '/edit') #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
+            td #{loan.formatLoanedOn()}
+            td #{loan.formatReturnBy()}
+            td #{loan.formatReturnedOn()}
+            td
+              if loan.formatReturnedOn() === ''
+              a.button(href='/loans/' + loan.id + '/return') Return Book
+

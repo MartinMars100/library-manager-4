@@ -1,0 +1,37 @@
+extends ../partials/head
+
+block content
+  h1= title
+  p
+    a.button(href='/loans/new') Create New Loan
+  p
+    | Filters 
+    a(href='/loans') All
+    |  
+    a(href='/loans/overdue') Overdue
+    |  
+    a(href='/loans/checked_out') Checked Out
+  table
+    thead
+      tr
+        th Book
+        th Patron
+        th Loaned On
+        th Return By
+        th Returned On
+        th Action
+    tbody
+      each loan in loans
+        tr
+          if loan.book_id === ''
+            
+          else
+            td
+              a(href='/books/' + loan.Book.id + "/edit") #{loan.formatBookTitle()} 
+            td #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()} 
+            td #{loan.formatLoanedOn()}
+            td #{loan.formatReturnBy()}
+            td #{loan.formatReturnedOn()}
+            td
+              if loan.formatReturnedOn() === ''
+                a.button(href='/loans/' + loan.id + '/return') Return Book

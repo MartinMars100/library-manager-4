@@ -1,0 +1,10 @@
+extends ../partials/head
+
+block content
+    h1 #{patron.first_name} #{patron.last_name}
+    
+    include errors
+    
+    form(action='/patrons/' + patron.id + "?_method=PUT", method='post')
+      include edit_form  
+      

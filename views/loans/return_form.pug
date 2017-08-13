@@ -1,0 +1,21 @@
+p
+  strong Book Title: 
+  | #{loan.formatBookTitle()}
+p
+  strong Loaned By: 
+  | #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
+p
+  strong Loaned On: 
+  | #{loan.formatLoanedOn()}
+p
+  strong Return By: 
+  | #{loan.formatReturnBy()}
+
+div#returnedOn
+  label(for="returned_on") Returned On:
+  input(type="text", name="returned_on", value=returnedOn)
+
+div
+  a(href='/loans/') No! Take me back!
+  | 
+  input(type="submit", value = "Yes, I am")
