@@ -107,18 +107,22 @@ router.get('/new', function(req, res, next) {
 
 /* POST create book. */
 router.post('/', function(req, res, next) {
-  Book.create(req.body).then(function(book) {
+  console.log('log POST create book');
+  var validPublished = validYear(req.body.first_published);
+  req.body.first_published = validPublished;
+  console.log('log valid published = ' + validPublished);
+  Book.create(req.body)
+  .then(function(book){
     res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
+      console.log('log New Book SQL Error');
       res.render("books/new", {
         book: Book.build(req.body), 
         title: "New Book",
         errors: err.errors
       });
-    } else {
-      throw err;
-    }
+    } 
   }).catch(function(err){
     res.send(500);
   });
@@ -138,10 +142,9 @@ router.put('/:id', function(req, res, next){
       
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      var book = Book.build(req.body);
       book.id = req.params.id;
       res.render("books/edit", {
-        book: book,
+        book: Book.build(req.body),
         errors: err.errors
       });
     } else {
@@ -166,5 +169,19 @@ router.delete("/:id", function(req, res, next){
     res.send(500);
   });
 });
+
+// The validYear function is used by the new book page and edit book page to check date formats
+validYear = function(date) {
+  console.log('date = ' + date);
+  var regex = /(19\d{2})|(200\d)|(201[0-3])/;
+        
+  if(regex.test(date)){
+    console.log('Yes Valid Date');
+    return date;
+  } else {
+    console.log('This is not a VValid Date');
+    return '';
+  }
+};
 
 module.exports = router;

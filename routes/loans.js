@@ -273,6 +273,7 @@ validReturn = function(loanedOn,returnBy) {
 if (returnBy > loanedOn) {
   return returnBy;
 } else {
+
   return '';
   }
 };

@@ -29,7 +29,12 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     first_published: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      validate: {
+        notEmpty: {
+          msg: "Enter a Valid First Published year with yyyy format"
+        }
+      }
     }
   }, {
       classMethods: {
@@ -38,17 +43,28 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
   });
-  Book.prototype.formatPublishedDate = function() {
-        if (this.first_published > 0) {
-          console.log('formatPublishedDate looks good');
-          console.log(this.first_published);
-          return dateFormat(this.loaned_on, "yyyy");
+  Book.prototype.formatBookTitle = function() {
+        if (this.title > 0) {
+          return this.title;
         } else {
-            console.log('formatPublishedDate looks bad');
-            console.log(this.first_published);
             return '';
         } 
   };
-
+  Book.prototype.formatPublishedDate = function() {
+        if (this.first_published > 0) {
+          return dateFormat(this.loaned_on, "yyyy");
+        } else {
+            return '';
+        } 
+  };
+  Book.prototype.validReturnDate = function(date) {
+        var regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
+        if(regex.test(date)){
+          return date;
+        } else {
+          return '';
+        }
+  };
+  
   return Book;
 };

@@ -24,7 +24,7 @@ table
     tbody
         for loan in loans
           tr
-            td #{book.title}
+            td #{loan.formatBookTitle}
             td 
               a(href='/patrons/' + loan.patron_id + '/edit') #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
             td #{loan.formatLoanedOn()}
