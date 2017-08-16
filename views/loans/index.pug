@@ -25,7 +25,8 @@ block content
             else
               td
                 a(href='/books/' + loan.Book.id + "/edit") #{loan.formatBookTitle()}  
-              td #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
+              td 
+                a(href='/patrons/' + loan.Patron.id + "/edit") #{loan.formatPatronFirstName()} #{loan.formatPatronLastName()}
               td #{loan.formatLoanedOn()}
               td #{loan.formatReturnBy()}
               td #{loan.formatReturnedOn()}

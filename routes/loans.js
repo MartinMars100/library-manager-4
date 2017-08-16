@@ -195,7 +195,6 @@ router.post('/', function(req, res, next) {
     if(err.name === "SequelizeValidationError"){
       Book.findAll().then(function(books) {
 		    Patron.findAll().then(function(patrons) {
-			   // var loanedOn = moment().format('MM/DD/YYYY');
 			    var returnBy = moment().add('7', 'days').format('MM/DD/YYYY');
 			    res.render('loans/new', 
 			    {

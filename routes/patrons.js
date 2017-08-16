@@ -95,31 +95,56 @@ router.post('/', function(req, res, next) {
 router.put("/:id", function(req, res, next){
   Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
   Loan.belongsTo(Book, { foreignKey: 'book_id' });
-  
+  console.log('log update patron');
   Patron.findOne({
     where: {id: req.params.id}
   }).then(function(patron){
     if(patron) {
+      console.log('log update patron found');
       return patron.update(req.body);  
     } else {
       res.send(404);
     }
   }).then(function(patron){
+    console.log('log update patron about to redirect');
     res.redirect("/patrons/" + patron.id + "/edit");     
   }).catch(function(err){
+    console.log('log update patron catch found');
     if(err.name === "SequelizeValidationError"){
-      var patron = Patron.build(req.body);
-      patron.id = req.params.id;
-      res.render("patrons/edit", {
-        patron: patron, 
-        title: "Edit Patron",
+      console.log('update patron SQL ERROR');
+      Loan.belongsTo(Patron, { foreignKey: 'patron_id'});
+      Loan.belongsTo(Book, { foreignKey: 'book_id' });
+      Patron.findOne({
+        where: {id: req.params.id}
+      })
+      .then(function(patron){
+        patron.first_name = req.body.first_name;
+        patron.last_name = req.body.last_name;
+        patron.address = req.body.address;
+        patron.email = req.body.email;
+        patron.library_id = req.body.library_id;
+        patron.zip_code = req.body.zip_code;
+      Loan.findAll({
+        include: [
+        {
+          model: Book
+        }
+        ],
+        where: {
+          patron_id: patron.id
+        } 
+    })
+    .then(function(loans){
+      res.render('patrons/edit', {
+        patron: patron,
+        loans: loans,
         errors: err.errors
       });
-    } else {
-      throw err;
-    }
+    });
+  });  
+  }
   }).catch(function(err){
-    res.send(500);
+    return next(err);
   });
 });
 

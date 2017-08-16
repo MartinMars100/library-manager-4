@@ -54,10 +54,8 @@ module.exports = function(sequelize, DataTypes) {
   });
   Loan.prototype.loanedOn = function() {
         if (this.loaned_on > 0) {
-          console.log('log new loan loanedOn is good');
           return dateFormat(this.loaned_on, "mm dd yyyy");
         } else {
-            console.log('log new loan loanedOn is bad');
             return '';
         } 
   };

@@ -31,7 +31,7 @@ module.exports = function(sequelize, DataTypes) {
     first_published: {
       type: DataTypes.INTEGER,
       validate: {
-        notEmpty: {
+        isInt: {
           msg: "Enter a Valid First Published year with yyyy format"
         }
       }

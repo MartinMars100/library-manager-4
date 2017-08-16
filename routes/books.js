@@ -107,16 +107,13 @@ router.get('/new', function(req, res, next) {
 
 /* POST create book. */
 router.post('/', function(req, res, next) {
-  console.log('log POST create book');
-  var validPublished = validYear(req.body.first_published);
+  var validPublished = validPublishedYear(req.body.first_published);
   req.body.first_published = validPublished;
-  console.log('log valid published = ' + validPublished);
   Book.create(req.body)
   .then(function(book){
     res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      console.log('log New Book SQL Error');
       res.render("books/new", {
         book: Book.build(req.body), 
         title: "New Book",
@@ -130,25 +127,55 @@ router.post('/', function(req, res, next) {
   
 /* PUT update book. */
 router.put('/:id', function(req, res, next){
- Book.findById(req.params.id).then(function(book) {  
+  var validPublished = validPublishedYear(req.body.first_published);
+  req.body.first_published = validPublished;
+  Book.findOne({
+    where: {id: req.params.id}
+  }).then(function(book) {  
     if(book) { 
       return book.update(req.body);
     } else {
-        res.sendStatus(404);
+        res.send(404);
     }
-  
   }).then(function(book) {
-    res.redirect("/books");
-      
+    res.redirect("/books/" + book.id + "/edit");
   }).catch(function(err){
     if(err.name === "SequelizeValidationError"){
-      book.id = req.params.id;
-      res.render("books/edit", {
-        book: Book.build(req.body),
-        errors: err.errors
+      Loan.belongsTo(Book, { foreignKey: 'book_id' });
+      Book.hasMany(Loan, { foreignKey: 'book_id' });
+      Loan.belongsTo(Patron, { foreignKey: "patron_id"});
+      Book.findById(req.params.id).then(function(book){
+        book.author = req.body.author;
+        book.title = req.body.title;
+        book.genre = req.body.genre;
+        book.first_published = req.body.first_published;
+      Loan.findAll({
+        include: [
+          { 
+            model: Book    
+          },
+          {
+            model: Patron
+          }
+          ],
+          where: {                
+            book_id: book.id
+          }
+          }).then(function(loans){
+              book.id = req.params.id;
+              res.render('books/edit', { 
+                book: book,
+                // title: req.body.title,
+                // title: req.body.title,
+                author: req.body.author,
+                genre: req.body.genre,
+                first_published: req.body.first_published,
+                id: req.body.book_id,
+                loans: loans,
+                errors: err.errors
+              });
+          });
       });
-    } else {
-      throw err;
     }
   }).catch(function(err){
     return next(err);
@@ -171,16 +198,11 @@ router.delete("/:id", function(req, res, next){
 });
 
 // The validYear function is used by the new book page and edit book page to check date formats
-validYear = function(date) {
-  console.log('date = ' + date);
-  var regex = /(19\d{2})|(200\d)|(201[0-3])/;
-        
-  if(regex.test(date)){
-    console.log('Yes Valid Date');
+validPublishedYear = function(date) {
+  if( date >= 1900 && date <= 2050 ) {
     return date;
   } else {
-    console.log('This is not a VValid Date');
-    return '';
+    return 'xxx';
   }
 };
 
